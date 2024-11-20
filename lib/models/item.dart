@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class Item {
   final int id;
   final String name;
@@ -7,8 +8,6 @@ class Item {
 
   Item(this.id, this.name, {this.price = 42})
       : color = Colors.primaries[id % Colors.primaries.length];
-
-
 
   @override
   bool operator ==(Object other) {

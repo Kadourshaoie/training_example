@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cart_example/data/items.dart';
+import 'package:cart_example/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,15 +16,14 @@ class MyCatalog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// ToDo build list view of _MyListItem items
+
     return Scaffold(
       backgroundColor: Colors.blue[120],
       appBar: _MyAppBar(),
       body: ListView.builder(
-          padding: EdgeInsets.all(30),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return _MyListItem(items[index]);
-          }),
+        itemBuilder: (context, index) =>
+            _MyListItem(items[index % items.length]),
+      ),
     );
   }
 }
@@ -37,21 +37,27 @@ class _AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     /// TODO listen to cart provider
 
-    return TextButton(
-      onPressed: () {
-        /// add item to cart
+    return Consumer<CartProvider>(
+      builder: (context, provider, child) {
+        return TextButton(
+          onPressed: () {
+            provider.addItem(item);
+
+            /// add item to cart
+          },
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+              if (states.contains(WidgetState.pressed)) {
+                return Theme.of(context).primaryColor;
+              }
+              return null; // Defer to the widget's default.
+            }),
+          ),
+          child: false
+              ? const Icon(Icons.check, semanticLabel: 'ADDED')
+              : const Text('ADD'),
+        );
       },
-      style: ButtonStyle(
-        overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
-          if (states.contains(WidgetState.pressed)) {
-            return Theme.of(context).primaryColor;
-          }
-          return null; // Defer to the widget's default.
-        }),
-      ),
-      child: false
-          ? const Icon(Icons.check, semanticLabel: 'ADDED')
-          : const Text('ADD'),
     );
   }
 }
@@ -62,14 +68,14 @@ class _MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text('Catalog', style: Theme.of(context).textTheme.displayLarge),
       actions: [
+        /// TODO show selected items number
         IconButton(
           icon: const Icon(Icons.shopping_cart),
           onPressed: () {
-            /// TODO open cart screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (navigatorContext) {
               ;
-              return MyCart();
+              return const MyCart();
             }));
           },
         ),
@@ -78,6 +84,7 @@ class _MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
+  // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
@@ -99,7 +106,7 @@ class _MyListItem extends StatelessWidget {
         child: Row(
           children: [
             AspectRatio(
-              aspectRatio: 1,
+              aspectRatio: 3 / 2,
               child: Container(
                 color: item.color,
               ),

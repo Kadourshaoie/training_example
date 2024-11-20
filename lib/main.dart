@@ -1,10 +1,14 @@
+import 'package:cart_example/provider/cart_provider.dart';
 import 'package:cart_example/screens/catalog.dart';
 import 'package:cart_example/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (BuildContext context) => CartProvider(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,8 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange,
+        ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData.dark(),
